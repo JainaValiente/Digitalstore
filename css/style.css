@@ -19,6 +19,17 @@ html, body{
 body{
 	background: linear-gradient(#FFFBBA, #FFABFC);
 }
+
+.sisterofeluneh1 {
+  text-decoration: none;
+  color: white;
+}
+
+.sisterofeluneh1:hover {
+  color: white;
+  text-decoration: none;
+}
+
 .mobileOff{
 	display: grid;
 }
