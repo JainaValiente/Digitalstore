@@ -11,6 +11,11 @@ html, body{
 	font-family: 'Caveat', cursive;
 
 }
+
+.fa-shopping-cart{
+	color: #ffffff;
+}
+
 body{
 	background: linear-gradient(#FFFBBA, #FFABFC);
 }
