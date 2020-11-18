@@ -1,11 +1,70 @@
+//se inicia la funcion una vez que el documento esta listo
+$( document ).ready(function() 
+{
+   console.log( "Hola! A partir de ahora vamos a utilizar JQuery" );
+});
+
+//funcion que obtiene el keycode de enter
+$(document).on('keypress',function(e) {
+  if(e.which == 13) {
+    var accept = prompt("Seguro desea enviar estos datos?");
+    if(accept == "Si" || accept == "si" || accept == "SI" || accept == "sI"){
+      send();
+    } else {
+      return false;
+    }
+  }
+});
+
+//funciones que verifican en color rojo si no tiene texto y verde en caso contrario
+$("#name").hover(function(){
+  if($(this).val() != ''){
+    $(this).css("background-color", "green");
+    $(this).css("color", "black");
+  } else {
+    $(this).css("background-color", "red");
+  }
+}, function(){
+  $(this).css("background-color", "transparent");
+})
+
+$("#email").hover(function(){
+  if($(this).val() != ''){
+    $(this).css("background-color", "green");
+    $(this).css("color", "black");
+  } else {
+    $(this).css("background-color", "red");
+  }
+}, function(){
+  $(this).css("background-color", "transparent");
+})
+
+$("#message").hover(function(){
+  if($(this).val() != ''){
+    $(this).css("background-color", "green");
+    $(this).css("color", "black");
+  } else {
+    $(this).css("background-color", "red");
+  }
+}, function(){
+  $(this).css("background-color", "transparent");
+})
+  
+
+
+//creacion de variable array
 var dateArray = [];
 
-document.getElementById("send").addEventListener("click", function (event) {
+//Al presionar en el boton submit del formulario de contacto se genera un objeto JSON con los datos ingresados en los campos
+$("#send").click(function (event) {
   event.preventDefault();
+  send();
+});
 
-  var nombre = document.getElementById("name").value;
-  var email = document.getElementById("email").value;
-  var mensaje = document.getElementById("message").value;
+function send(){
+  var nombre = $("#name").val();
+  var email = $("#email").val();
+  var mensaje = $("#message").val();
 
   var cotizacion = {
     nombre: nombre,
@@ -14,16 +73,17 @@ document.getElementById("send").addEventListener("click", function (event) {
   };
 
   console.log(cotizacion);
-});
+};
 
+//funcion buy con vista modal
 function buy() {
 
   sessionStorage.clear();
 
-  var name = document.getElementById("Modalname").value;
-  var phone = document.getElementById("Modalphone").value;
-  var address = document.getElementById("Modaladdress").value;
-  var email = document.getElementById("Modalemail").value;
+  var name = $("#Modalname").val();
+  var phone = $("#Modalphone").val();
+  var address = $("#Modaladdress").val();
+  var email = $("#Modalemail").val();
 
   sessionStorage.Name = name;
   sessionStorage.Phone = phone;
@@ -64,8 +124,10 @@ function buy() {
   console.log(newBuy);
 }
 
-document.getElementById("date").addEventListener("click", function (e) {
-  var newDate = (document.getElementById("demo").value = Date());
+//al clickear en el boton se muestra la fecha y hora del click (se acumula 5 veces)
+$("#date").click(function (e) {
+  var demo = $("#demo").val();
+  var newDate = (demo = Date());
 
   this.classList.toggle("btn-info");
 
@@ -80,15 +142,15 @@ document.getElementById("date").addEventListener("click", function (e) {
   }
 });
 
-document.getElementById("suscribe").addEventListener("click", function (e) {
+$("#suscribe").click(function (e) {
   e.preventDefault();
 
-  var sucriber = document.getElementById("suscriber").value;
-  var message = document.getElementById("messageSuccess");
+  var sucriber = $("#suscriber").val();
+  var message = $("#messageSuccess");
 
   if (sucriber != "") {
-    message.classList.add("badge");
-    message.classList.add("badge-success");
-    message.innerHTML = "Se ha suscripto con el email: " + sucriber;
+    message.addClass("badge");
+    message.addClass("badge-success");
+    message.text("Se ha suscripto con el email: " + sucriber);
   }
 });
