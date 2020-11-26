@@ -154,3 +154,35 @@ $("#suscribe").click(function (e) {
     message.text("Se ha suscripto con el email: " + sucriber);
   }
 });
+
+$("#mWow").click(function (e){
+  e.preventDefault();
+
+  $("html, body").animate({
+    scrollTop: $('#wow').offset().top 
+}, 2000);
+});
+
+$("#mGallery").click(function (e){
+  e.preventDefault();
+
+  $("html, body").animate({
+    scrollTop: $('#gallery').offset().top 
+}, 2000);
+});
+
+$("#mStore").click(function (e){
+  e.preventDefault();
+
+  $("html, body").animate({
+    scrollTop: $('#store').offset().top 
+}, 2000);
+});
+
+function fee(){
+  $.getJSON("cuotas.JSON", function(data){
+    $.each(data, function(index, value){
+      alert(index + ": " + value);
+    })
+  });
+};
