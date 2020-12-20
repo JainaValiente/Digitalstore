@@ -78,6 +78,46 @@ function send(){
 //funcion buy con vista modal
 function buy() {
 
+  let contado = 0;
+  let cuotas3 = 0;
+  let cuotas6 = 0;
+  let cuotas12 = 0;
+
+  $.getJSON("cuotas.JSON", function(data){
+    $.each(data, function(index, value){
+      if(index == "Contado"){
+        contado = Number(value.replace('%','') / 100);
+      }
+      if(index == "3 Cuotas"){
+        cuotas3 = Number(value.replace('%','') / 100);;
+      }
+      if(index == "6 Cuotas"){
+        cuotas6 = Number(value.replace('%','') / 100);;
+      }
+      if(index == "12 Cuotas"){
+        cuotas12 = Number(value.replace('%','') / 100);;
+      }
+    })
+
+  
+
+    var feeAccept = prompt("Como desea pagar? Contado, 3 Cuotas, 6 Cuotas o 12 Cuotas?");
+
+    if(feeAccept == 'contado'){
+      buyAccepted(contado);
+    } else if(feeAccept == '3 cuotas'){
+      buyAccepted(cuotas3);
+    } else if(feeAccept == '6 cuotas'){
+      buyAccepted(cuotas6);
+    } else if(feeAccept == '12 cuotas'){
+      buyAccepted(cuotas12);
+    } else {
+      alert('No eligio una forma de pago');
+    }
+  })
+}
+
+function buyAccepted(fee){
   sessionStorage.clear();
 
   var name = $("#Modalname").val();
@@ -85,27 +125,44 @@ function buy() {
   var address = $("#Modaladdress").val();
   var email = $("#Modalemail").val();
 
+  console.log(fee);
+
   sessionStorage.Name = name;
   sessionStorage.Phone = phone;
   sessionStorage.Address = address;
   sessionStorage.Email = email;
 
-  var cardTitle = document.getElementById("cardName").textContent;
-  var cardPrice = document.getElementById("cardPrice").textContent;
+  const shoppingCartItems = document.querySelectorAll('.shoppingCartItems');
+  let item = [];
+  let cardTitle = '';
+  let cardPrice = 0;
+
+  shoppingCartItems.forEach(shoppingCartItem => {
+    const shoppingCartItemTitleElement = shoppingCartItem.querySelector('.card-title');
+    const shoppingCartItemTitle = shoppingCartItemTitleElement.textContent;
+
+    const shoppingCartItemPriceElement = shoppingCartItem.querySelector('.shoppingcartitemPrice');
+    const shoppingCartItemPrice = Number(shoppingCartItemPriceElement.textContent.replace('$', ''));
+
+    cardPrice = shoppingCartItemPrice;
+    cardTitle = shoppingCartItemTitle;
+    item.push('Title', cardTitle, 'Price', cardPrice);
+  });
+
+  let total = Number(document.querySelector('.shoppingCartTotal').textContent.replace('$', ''));
+  total = Number(total + (total*fee));
 
   alert(
-    "You are buying: " +
-      cardTitle +
-      ", the price is: " +
-      cardPrice +
-      ".\n\n The name of buyer is: " +
+    "The name of buyer is: " +
       name +
       ".\n Phone: " +
       phone +
       ".\n Address: " +
       address +
       ".\n Email: " +
-      email
+      email +
+      ".\n Total of Buy: $" + 
+      total
   );
 
   var newBuy = {
@@ -115,10 +172,10 @@ function buy() {
     email: sessionStorage.Email,
     items: [
       {
-        title: cardTitle,
-        price: cardPrice,
+        item
       },
     ],
+    total: total
   };
 
   console.log(newBuy);
@@ -186,3 +243,69 @@ function fee(){
     })
   });
 };
+
+
+/* Todo sobre el carrito */
+
+//Agregar funcion al evento click
+const addToCartButtons = document.querySelectorAll('.addToCart');
+addToCartButtons.forEach(addToCartButton => {
+  addToCartButton.addEventListener('click', addToCartClicked);
+});
+
+const shoppingCartCardsContainer = document.querySelector('.modal-body');
+
+
+//Agregar valores obtenidos del click a las variables
+function addToCartClicked(e){
+  const button = e.target;
+  const card = button.closest('.card');
+  
+  const cardTitle = card.querySelector('.title').textContent;
+  const cardPrice = card.querySelector('.price').textContent;
+  const cardImage = card.querySelector('.card-img-top').src;
+
+addItemToShoppingCart(cardTitle, cardPrice, cardImage);
+
+}
+
+//Agregando el item al carrito
+function addItemToShoppingCart(cardTitle, cardPrice, cardImage){
+  const shoppingCartRow = document.createElement('div');
+  
+  const shoppingCartContent = `
+    <div class="card mb-3 shoppingCartItems" style="max-width: 540px;">
+      <div class="row no-gutters">
+        <div class="col-md-4">
+          <img src=${cardImage} class="card-img" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">${cardTitle}</h5>
+            <p class="card-text shoppingcartitemPrice">${cardPrice}</p>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+    shoppingCartRow.innerHTML = shoppingCartContent;
+    shoppingCartCardsContainer.append(shoppingCartRow);
+
+    updateShoopingCartTotal();
+}
+
+//Actualizando el precio total
+function updateShoopingCartTotal(){
+  let total = 0;
+  const shoppingCartTotal = document.querySelector('.shoppingCartTotal');
+
+  const shoppingCartItems = document.querySelectorAll('.shoppingCartItems');
+
+  shoppingCartItems.forEach(shoppingCartItem => {
+    const shoppingCartItemPriceElement = shoppingCartItem.querySelector('.shoppingcartitemPrice');
+    const shoppingCartItemPrice = Number(shoppingCartItemPriceElement.textContent.replace('$', ''));
+
+    total = total + shoppingCartItemPrice;
+  });
+  shoppingCartTotal.innerHTML = `$${total}`;
+}
